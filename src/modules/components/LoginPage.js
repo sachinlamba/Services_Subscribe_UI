@@ -25,13 +25,12 @@ class LoginPage extends Component {
      })
      .then((data) => {
        console.log("Login status data: " , data);
-       if(data.status === 200){
-         this.props.alterLoginStatus(true);
-         this.props.loggedInUser(data);
-       }else{//500 etc
+       if(data.status === 500){
          this.props.alterLoginStatus(false);
          // this.props.wrongCredentails(data.message);
        }
+       this.props.alterLoginStatus(true);
+       this.props.loggedInUser(data);
 
      })
      .catch(error => this.setState({ error }));
