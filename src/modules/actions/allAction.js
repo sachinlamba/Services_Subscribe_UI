@@ -7,7 +7,14 @@ export const SELECTION_POPUP = "SELECTION_POPUP";
 export const LOGIN_STATUS = "LOGIN_STATUS";
 export const LOGIN_USER = "LOGIN_USER";
 export const SERVICES_LIST = "SERVICES_LIST";
+export const REGISTER_USER = "REGISTER_USER";
 
+export const newUserRegister = (status) => dispatch => {
+  dispatch({
+      type: REGISTER_USER,
+      data: status
+    })
+}
 export const alterLoginStatus = (status) => dispatch => {
   dispatch({
       type: LOGIN_STATUS,

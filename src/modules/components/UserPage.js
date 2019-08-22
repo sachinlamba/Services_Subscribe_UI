@@ -1,6 +1,7 @@
 import React, { Component} from 'react';
 import { connect } from 'react-redux';
 import { alterLoginStatus, loggedInUser } from '../actions/allAction';
+import urls from '../constants/AppContants';
 
 class UserPage extends Component {
   constructor(props){
@@ -10,48 +11,21 @@ class UserPage extends Component {
       password:''
     }
    }
-   loginVerify(){
-     fetch("https://service-subscriber.herokuapp.com/api/authenticate", {
-       method: 'POST',
-       headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({"username": this.state.username, "password": this.state.password})
-     })
-     .then((response) => {
-       return response.json();
-     })
-     .then((data) => {
-       console.log("Login status data: " , data);
-       if(data.status == 500){
-         this.props.alterLoginStatus(false);
-         // this.props.wrongCredentails(data.message);
-       }
-       this.props.alterLoginStatus(true);
-       this.props.loggedInUser(data);
-     })
-     .catch(error => this.setState({ error }));
-   }
+
 
    validateForm() {
      return this.state.username.length > 0 && this.state.password.length > 0;
    }
 
    handleChange = (event, field) => {
-     debugger
      this.setState({
        [field]: event.target.value
      });
    }
 
-   handleSubmit = event => {
-     event.preventDefault();
-     this.loginVerify();
-   }
    subscribeService(e, service){
      console.log("User page subscribe try",e,  service, this.props.userDetails)
-     fetch("https://service-subscriber.herokuapp.com/api/userSubscribeServices", {
+     fetch(urls.userSubscribeServices, {
        method: 'POST',
        headers: {
           'Accept': 'application/json',

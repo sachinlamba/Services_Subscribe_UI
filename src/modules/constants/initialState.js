@@ -2,5 +2,6 @@ export default {
   "loginStatus": false,
   "serviceList": [],
   "userDetails": {},
-  "token": ""
+  "token": "",
+  "register": false
 }

@@ -1,9 +1,9 @@
 import React, { Component} from 'react';
 import { connect } from 'react-redux';
-import { alterLoginStatus, loggedInUser } from '../actions/allAction';
+import { alterLoginStatus, loggedInUser, newUserRegister } from '../actions/allAction';
 import urls from '../constants/AppContants';
 
-class LoginPage extends Component {
+class RegisterUser extends Component {
   constructor(props){
   super(props);
     this.state={
@@ -11,8 +11,20 @@ class LoginPage extends Component {
       password:''
     }
    }
-   loginVerify(){
-     fetch(urls.authenticate, {
+
+
+   validateForm() {
+     return this.state.username.length > 0 && this.state.password.length > 0;
+   }
+
+   handleChange = (event, field) => {
+     this.setState({
+       [field]: event.target.value
+     });
+   }
+
+   register(){
+     fetch(urls.users, {
        method: 'POST',
        headers: {
           'Accept': 'application/json',
@@ -20,42 +32,25 @@ class LoginPage extends Component {
         },
         body: JSON.stringify({"username": this.state.username, "password": this.state.password})
      })
-     .then((response) => {
-       return response.json();
-     })
      .then((data) => {
-       console.log("Login status data: " , data);
+       console.log("Register request status: " , data);
        if(data.status === 200){
-         this.props.alterLoginStatus(true);
-         this.props.loggedInUser(data);
-       }else{//500 etc
-         this.props.alterLoginStatus(false);
-         // this.props.wrongCredentails(data.message);
+         this.props.newUserRegister(false);
+       }else{
+         this.setState({error: data.message})
        }
-
      })
      .catch(error => this.setState({ error }));
-   }
 
-   validateForm() {
-     return this.state.username.length > 0 && this.state.password.length > 0;
    }
-
-   handleChange = (event, field) => {
-     debugger
-     this.setState({
-       [field]: event.target.value
-     });
-   }
-
    handleSubmit = event => {
      event.preventDefault();
-     this.loginVerify();
+     this.register();
    }
 
    render() {
      return (
-       <div className="Login">
+       <div className="Register">
          <form onSubmit={this.handleSubmit}>
            <div id="username" bsSize="large">
              <label>username</label>
@@ -79,14 +74,9 @@ class LoginPage extends Component {
              disabled={!this.validateForm()}
              type="submit"
            >
-             Login
+             Register
            </button>
          </form>
-
-         <h2>Available Services: </h2>
-         {
-           this.props.serviceList.map(service => <div>{service.name}</div>)
-         }
        </div>
      );
    }
@@ -94,14 +84,18 @@ class LoginPage extends Component {
 
 const mapStateToProps = state => ({
   serviceList: state.userServiceReducer.serviceList,
+  userDetails: state.userServiceReducer.userDetails,
+  username: state.userServiceReducer.userDetails.username,
+  subscribedList: state.userServiceReducer.userDetails.subscribes || [],
 })
 
 const mapDispatchToProps = dispatch => (
   {
     alterLoginStatus: (status) => dispatch(alterLoginStatus(status)),
     loggedInUser: (user) => dispatch(loggedInUser(user)),
+    newUserRegister: (status) => dispatch(newUserRegister(status)),
 
   }
 )
 
-export default connect(mapStateToProps, mapDispatchToProps)(LoginPage);
+export default connect(mapStateToProps, mapDispatchToProps)(RegisterUser);

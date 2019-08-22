@@ -1,9 +1,11 @@
 import React, { Component} from 'react';
 import { connect } from 'react-redux';
 import 'fetch';
-import { studentSelection, allServicesFetch } from './modules/actions/allAction';
+import { studentSelection, allServicesFetch, newUserRegister } from './modules/actions/allAction';
 import LoginPage from './modules/components/LoginPage';
 import UserPage from './modules/components/UserPage';
+import RegisterUser from './modules/components/RegisterUser';
+import urls from './modules/constants/AppContants';
 
 class App extends Component {
   componentDidMount(){
@@ -11,8 +13,7 @@ class App extends Component {
   }
 
   serviceListFetch(){
-    // fetch("http://localhost:8080/api/allServices")
-    fetch("https://service-subscriber.herokuapp.com/api/allServices")
+    fetch(urls.allServices)
     .then((response) => {
       return response.json();
     })
@@ -27,6 +28,9 @@ class App extends Component {
   studentSelection = (event) => {
     this.props.studentSelection();
   }
+  registerUser = () => {
+    this.props.newUserRegister(true);
+  }
 
   render() {
     return (
@@ -34,10 +38,14 @@ class App extends Component {
         <header className = "App-header" >
           <h1 className = "App-title" > Welcome to Online Service Subscriber < /h1>
         </header>
-        <div>{this.props.loginStatus ? <UserPage /> : <LoginPage />}</div>
-        <button>
-          Register
-        </button>
+
+        {
+          !this.props.register ? (this.props.loginStatus ? <UserPage /> : <LoginPage />) : ""
+        }
+
+        {
+          !this.props.loginStatus ? (this.props.register ? <RegisterUser /> : <button onClick={this.registerUser}>Register</button>) : ""
+        }
       </div>
     );
   }
@@ -47,11 +55,15 @@ const mapStateToProps = state => ({
   loginStatus: state.userServiceReducer.loginStatus,
   username: state.userServiceReducer.userDetails.username,
   subscribedList: state.userServiceReducer.userDetails.subscribes || [],
+  register: state.userServiceReducer.register,
+
 })
 
 const mapDispatchToProps = dispatch => ({
   studentSelection: () => dispatch(studentSelection()),
   allServicesFetch: (data) => dispatch(allServicesFetch(data)),
+  newUserRegister: (status) => dispatch(newUserRegister(status)),
+
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(App);
