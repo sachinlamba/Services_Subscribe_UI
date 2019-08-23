@@ -1,4 +1,4 @@
-const localhost = true;
+const localhost = false;
 const localhostURL = "http://localhost:8080/api";
 const herokuURL = "https://service-subscriber.herokuapp.com/api";
 let url = "";
