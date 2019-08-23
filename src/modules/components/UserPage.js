@@ -2,6 +2,7 @@ import React, { Component} from 'react';
 import { connect } from 'react-redux';
 import { alterLoginStatus, loggedInUser } from '../actions/allAction';
 import urls from '../constants/AppContants';
+import { Button, Table, FormLabel } from "react-bootstrap";
 
 class UserPage extends Component {
   constructor(props){
@@ -45,19 +46,41 @@ class UserPage extends Component {
    }
 
    render() {
+     let subscribedServices = this.props.subscribedList.map(service => service.id);
      return (
        <div className="Login">
           <h3> Hi {this.props.username}</h3>
-         <div>Subscribed Services:</div>
-         {
-           this.props.subscribedList.map(service => <div>{service.name}</div>)
-         }
 
-          <h2>Subscribe to Services: </h2>
+          <h2>Services</h2>
+          <Table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Name</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
           {
-            this.props.serviceList.map(service => <div onClick={(event) => this.subscribeService(event, service)}>{service.name}</div>)
+            this.props.serviceList.map(service => {
+              return subscribedServices.includes(service.id) ?
+                  <tr>
+                    <th><FormLabel >{service.id}</FormLabel></th>
+                    <th><FormLabel >{service.name}</FormLabel></th>
+                    <th><Button >UnSubscribe</Button></th>
+                  </tr>
+                :
+                  <tr>
+                    <th><FormLabel >{service.id}</FormLabel></th>
+                    <th><FormLabel >{service.name}</FormLabel></th>
+                    <th><Button  onClick={(event) => this.subscribeService(event, service)}>Subscribe</Button></th>
+                  </tr>
+
+                })
           }
-       </div>
+         </tbody>
+      </Table>
+    </div>
      );
    }
 }

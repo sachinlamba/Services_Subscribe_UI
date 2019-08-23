@@ -2,28 +2,41 @@ import React, { Component} from 'react';
 import { connect } from 'react-redux';
 import { alterLoginStatus, loggedInUser, newUserRegister } from '../actions/allAction';
 import urls from '../constants/AppContants';
+import { Button, FormGroup, FormControl, FormLabel } from "react-bootstrap";
 
 class RegisterUser extends Component {
   constructor(props){
   super(props);
     this.state={
       username:'',
-      password:''
+      password:'',
+      confirm_password: '',
+      errorMsg: ''
     }
    }
 
 
    validateForm() {
-     return this.state.username.length > 0 && this.state.password.length > 0;
+     return this.state.username.length > 0 && this.state.password.length > 0 && this.state.confirm_password.length > 0;
    }
 
-   handleChange = (event, field) => {
+   handleChange = event => {
      this.setState({
-       [field]: event.target.value
+       [event.target.id]: event.target.value
      });
    }
 
    register(){
+     if(this.state.password != this.state.confirm_password){
+       this.setState({
+         errorMsg: "Password not matching!!"
+       })
+       return
+     }else{
+       this.setState({
+         errorMsg: ""
+       })
+     }
      fetch(urls.users, {
        method: 'POST',
        headers: {
@@ -50,32 +63,40 @@ class RegisterUser extends Component {
 
    render() {
      return (
-       <div className="Register">
+       <div className="form-fields">
          <form onSubmit={this.handleSubmit}>
-           <div id="username" bsSize="large">
-             <label>username</label>
-             <input
+           <FormGroup controlId="username" bsSize="large">
+             <FormLabel>User Name</FormLabel>
+             <FormControl
                autoFocus
                type="text"
                value={this.state.username}
-               onChange={(event) => this.handleChange(event, "username")}
+               onChange={this.handleChange}
              />
-           </div>
-           <div id="password" bsSize="large">
-             <label>Password</label>
-             <input
+           </FormGroup>
+           <FormGroup controlId="password" bsSize="large">
+             <FormLabel>Password</FormLabel>
+             <FormControl
                value={this.state.password}
-               onChange={(event) => this.handleChange(event, "password")}
+               onChange={this.handleChange}
                type="password"
              />
-           </div>
-           <button
+           </FormGroup>
+           <FormGroup controlId="confirm_password" bsSize="large">
+             <FormLabel>Confirm Password</FormLabel>
+             <FormControl
+               value={this.state.confirm_password}
+               onChange={this.handleChange}
+               type="password"
+             />
+           </FormGroup>
+           <Button
              bsSize="large"
              disabled={!this.validateForm()}
              type="submit"
            >
              Register
-           </button>
+           </Button>
          </form>
        </div>
      );

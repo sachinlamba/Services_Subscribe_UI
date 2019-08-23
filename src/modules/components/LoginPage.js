@@ -2,6 +2,7 @@ import React, { Component} from 'react';
 import { connect } from 'react-redux';
 import { alterLoginStatus, loggedInUser } from '../actions/allAction';
 import urls from '../constants/AppContants';
+import { Button, FormGroup, FormControl, FormLabel } from "react-bootstrap";
 
 class LoginPage extends Component {
   constructor(props){
@@ -40,10 +41,9 @@ class LoginPage extends Component {
      return this.state.username.length > 0 && this.state.password.length > 0;
    }
 
-   handleChange = (event, field) => {
-     debugger
+   handleChange = event => {
      this.setState({
-       [field]: event.target.value
+       [event.target.id]: event.target.value
      });
    }
 
@@ -54,33 +54,34 @@ class LoginPage extends Component {
 
    render() {
      return (
-       <div className="Login">
-         <form onSubmit={this.handleSubmit}>
-           <div id="username" bsSize="large">
-             <label>username</label>
-             <input
-               autoFocus
-               type="text"
-               value={this.state.username}
-               onChange={(event) => this.handleChange(event, "username")}
-             />
-           </div>
-           <div id="password" bsSize="large">
-             <label>Password</label>
-             <input
-               value={this.state.password}
-               onChange={(event) => this.handleChange(event, "password")}
-               type="password"
-             />
-           </div>
-           <button
-             bsSize="large"
-             disabled={!this.validateForm()}
-             type="submit"
-           >
-             Login
-           </button>
-         </form>
+       <div className="form-fields">
+        <form onSubmit={this.handleSubmit}>
+          <FormGroup controlId="username" bsSize="large">
+            <FormLabel>User Name</FormLabel>
+            <FormControl
+              autoFocus
+              type="text"
+              value={this.state.username}
+              onChange={this.handleChange}
+            />
+          </FormGroup>
+          <FormGroup controlId="password" bsSize="large">
+            <FormLabel>Password</FormLabel>
+            <FormControl
+              value={this.state.password}
+              onChange={this.handleChange}
+              type="password"
+            />
+          </FormGroup>
+          <Button
+            block
+            bsSize="large"
+            disabled={!this.validateForm()}
+            type="submit"
+          >
+            Login
+          </Button>
+        </form>
 
          <h2>Available Services: </h2>
          {

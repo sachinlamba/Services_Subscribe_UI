@@ -6,6 +6,8 @@ import LoginPage from './modules/components/LoginPage';
 import UserPage from './modules/components/UserPage';
 import RegisterUser from './modules/components/RegisterUser';
 import urls from './modules/constants/AppContants';
+import 'bootstrap/dist/css/bootstrap.css';
+import { Button } from "react-bootstrap";
 
 class App extends Component {
   componentDidMount(){
@@ -44,7 +46,19 @@ class App extends Component {
         }
 
         {
-          !this.props.loginStatus ? (this.props.register ? <RegisterUser /> : <button onClick={this.registerUser}>Register</button>) : ""
+          !this.props.loginStatus ?
+          (
+            this.props.register ?
+              <RegisterUser />
+            :
+            <Button
+              style={{"bottom": "0", "position": "fixed"}}
+              block
+              bsSize="large"
+              onClick={this.registerUser}>
+                Register
+            </Button>
+          ) : ""
         }
       </div>
     );
