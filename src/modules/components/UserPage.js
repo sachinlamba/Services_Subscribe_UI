@@ -5,52 +5,99 @@ import urls from '../constants/AppContants';
 import { Button, Table, FormLabel } from "react-bootstrap";
 
 class UserPage extends Component {
-  constructor(props){
-  super(props);
-    this.state={
-      username:'',
-      password:''
+    constructor(props){
+      super(props);
+      this.state={
+        username:'',
+        password:''
+      }
     }
-   }
 
-
-   validateForm() {
+    validateForm() {
      return this.state.username.length > 0 && this.state.password.length > 0;
-   }
+    }
 
-   handleChange = (event, field) => {
+    handleChange = (event, field) => {
      this.setState({
        [field]: event.target.value
      });
-   }
+    }
 
-   subscribeService(e, service){
-     console.log("User page subscribe try",e,  service, this.props.userDetails)
-     fetch(urls.userSubscribeServices, {
-       method: 'POST',
+    userDetailsUpdate(){
+      console.log("user details update after subscribe/unsbuscribe", this.props.token)
+      fetch(urls.authenticate, {
+        method: 'POST',
+        headers: {
+           'Accept': 'application/json',
+           'Content-Type': 'application/json'
+         },
+         body: JSON.stringify({"username": this.props.token.split(":")[0], "password": this.props.token.split(":")[0]})
+      })
+      .then((response) => {
+        return response.json();
+      })
+      .then((data) => {
+        console.log("Login status data: " , data);
+        this.props.loggedInUser(data);
+
+      })
+      .catch(error => this.setState({ error }));
+    }
+
+    subscribeService(e, service){
+      console.log("User page subscribe try",e,  service, this.props.userDetails)
+      fetch(urls.userSubscribeServices, {
+        method: 'POST',
+        headers: {
+           'Accept': 'application/json',
+           'Content-Type': 'application/json'
+         },
+         body: JSON.stringify({"id": this.props.userDetails.id, subscribes: [{"id": service.id}]})
+      })
+      // .then((response) => {
+      //   return response.json();
+      // })
+      .then((data) => {
+        console.log("Subscribed try result: " , data);
+        this.userDetailsUpdate();
+      })
+      .catch(error => this.setState({ error }));
+
+    }
+
+    unsubscribeService(e, service){
+     console.log("User page unsubscribe try",e,  service, this.props.userDetails)
+     fetch(urls.userSubscribeServices + "/" + service.id, {
+       method: 'DELETE',
        headers: {
           'Accept': 'application/json',
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({"id": this.props.userDetails.id, subscribes: [{"id": service.id}]})
      })
-     .then((response) => {
-       return response.json();
-     })
+     // .then((response) => {
+     //   return response.json();
+     // })
      .then((data) => {
-       console.log("Subscribed try result: " , data);
-
+       console.log("Unsubscribed try result: " , data);
+       this.userDetailsUpdate();
      })
      .catch(error => this.setState({ error }));
 
-   }
+    }
+
+    logout =() => {
+      this.props.alterLoginStatus(false);
+      //remove loggein user details
+      this.props.loggedInUser({});
+    }
 
    render() {
      let subscribedServices = this.props.subscribedList.map(service => service.id);
      return (
        <div className="Login">
           <h3> Hi {this.props.username}</h3>
-
+          <Button onClick={this.logout}>Logout</Button>
           <h2>Services</h2>
           <Table>
       <thead>
@@ -67,13 +114,13 @@ class UserPage extends Component {
                   <tr>
                     <th><FormLabel >{service.id}</FormLabel></th>
                     <th><FormLabel >{service.name}</FormLabel></th>
-                    <th><Button >UnSubscribe</Button></th>
+                    <th><Button onClick={(event) => this.unsubscribeService(event, service)}>UnSubscribe</Button></th>
                   </tr>
                 :
                   <tr>
                     <th><FormLabel >{service.id}</FormLabel></th>
                     <th><FormLabel >{service.name}</FormLabel></th>
-                    <th><Button  onClick={(event) => this.subscribeService(event, service)}>Subscribe</Button></th>
+                    <th><Button onClick={(event) => this.subscribeService(event, service)}>Subscribe</Button></th>
                   </tr>
 
                 })
@@ -89,6 +136,7 @@ const mapStateToProps = state => ({
   serviceList: state.userServiceReducer.serviceList,
   userDetails: state.userServiceReducer.userDetails,
   username: state.userServiceReducer.userDetails.username,
+  token: state.userServiceReducer.token,
   subscribedList: state.userServiceReducer.userDetails.subscribes || [],
 })
 

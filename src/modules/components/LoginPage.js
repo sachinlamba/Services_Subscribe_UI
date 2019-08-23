@@ -1,6 +1,6 @@
 import React, { Component} from 'react';
 import { connect } from 'react-redux';
-import { alterLoginStatus, loggedInUser } from '../actions/allAction';
+import { alterLoginStatus, loggedInUser, tokenSetter } from '../actions/allAction';
 import urls from '../constants/AppContants';
 import { Button, FormGroup, FormControl, FormLabel } from "react-bootstrap";
 
@@ -29,9 +29,11 @@ class LoginPage extends Component {
        if(data.status === 500){
          this.props.alterLoginStatus(false);
          // this.props.wrongCredentails(data.message);
+       }else{
+         this.props.alterLoginStatus(true);
+         this.props.loggedInUser(data);
+         this.props.tokenSetter(this.state.username + ":" + this.state.password);
        }
-       this.props.alterLoginStatus(true);
-       this.props.loggedInUser(data);
 
      })
      .catch(error => this.setState({ error }));
@@ -100,6 +102,7 @@ const mapDispatchToProps = dispatch => (
   {
     alterLoginStatus: (status) => dispatch(alterLoginStatus(status)),
     loggedInUser: (user) => dispatch(loggedInUser(user)),
+    tokenSetter: (saveUser) => dispatch(tokenSetter(saveUser)),
 
   }
 )
