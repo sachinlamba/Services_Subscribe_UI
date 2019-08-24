@@ -1,3 +1,4 @@
+// import urls from '../constants/AppContants';
 
 export const FETCH_API = "FETCH_API";
 export const FETCHED_DATA = "FETCHED_DATA";

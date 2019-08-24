@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import { alterLoginStatus, loggedInUser } from '../actions/allAction';
 import urls from '../constants/AppContants';
 import { Button, Table, FormLabel } from "react-bootstrap";
+import { encode } from "base-64";
 
 class UserPage extends Component {
     constructor(props){
@@ -50,7 +51,8 @@ class UserPage extends Component {
         method: 'POST',
         headers: {
            'Accept': 'application/json',
-           'Content-Type': 'application/json'
+           'Content-Type': 'application/json',
+           'Authorization': "Basic " + encode(this.props.token)
          },
          body: JSON.stringify({"id": this.props.userDetails.id, subscribes: [{"id": service.id}]})
       })
@@ -71,7 +73,8 @@ class UserPage extends Component {
        method: 'DELETE',
        headers: {
           'Accept': 'application/json',
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          'Authorization': "Basic " + encode(this.props.token)
         },
         body: JSON.stringify({"id": this.props.userDetails.id, subscribes: [{"id": service.id}]})
      })
